@@ -326,7 +326,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    private void putImageInStorage(StorageReference storageReference,Uri uri,final String key){
+        storageReference.putFile(uri).addOnCompleteListener(MainActivity.this,
+                new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if(task.isSuccessful()){
+                            task.getResult().getMetadata().getReference().getDownloadUrl()
+                                    .addOnCompleteListener(MainActivity.this, new OnCompleteListener<Uri>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Uri> task) {
+                                            if(task.isSuccessful()){
+                                                FriendlyMessage friendlyMessage = new FriendlyMessage(
+                                                        null,mUsername,mPhotoUrl,task.getResult().toString());
+                                                mFirebaseDatabaseReference.child(MESSAGES_CHILD).child(key)
+                                                        .setValue(friendlyMessage);
+                                            }
+                                        }
+                                    });
+                        }else{
+                            Log.w(TAG,"Image upload task was not successful.",task.getException());
+                        }
+                    }
+                });
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
