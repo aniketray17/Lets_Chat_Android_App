@@ -1,5 +1,6 @@
 package com.google.firebase.codelab.friendlychat;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -79,7 +80,20 @@ public class MainActivity extends AppCompatActivity {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Set default username is anonymous.
         mUsername = ANONYMOUS;
-        //
+        //Initialize firebase auth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if(mFirebaseUser == null){
+            //not signed in launch the sign in activity
+            startActivity(new Intent(this,SignInActivity.class));
+            finish();
+            return;
+        }else{
+            mUsername = mFirebaseUser.getDisplayName();
+            if(mFirebaseUser.getPhotoUrl() != null){
+                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            }
+        }
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -165,6 +179,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch(item.getItemId()){
+            case R.id.sign_out_menu:
+                mFirebaseAuth.signOut();
+                mSignInClient.signOut();
+
+                mUsername = ANONYMOUS;
+                startActivity(new Intent(this,SignInActivity.class));
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
