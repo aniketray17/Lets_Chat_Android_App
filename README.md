@@ -8,4 +8,4 @@ Any device with Android 4.4 or above is compatible to execute this application.
 
 <h2>Installing and Getting Started :</h2>
 Clone the repository or download the zip file and open in your android studio.After completing the build.Execute in your emulator or physical device. </br>
-Note : Before executing please configure firebase in this project.For more info you can check out https://firebase.google.com/docs/android/setup
+<h6>Note : Before executing please configure firebase in this project.For more info you can check out https://firebase.google.com/docs/android/setup </h6>
